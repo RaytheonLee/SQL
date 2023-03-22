@@ -1,0 +1,48 @@
+CREATE VIEW [vwContractorsIntermediate]
+AS
+	SELECT          CONCAT('C', FORMAT([Index], '00000')) AS ContractorID, [Index], FirstName, LastName, Alias, ManagerID, ISMTicket,
+					RequestedBy, RequestedFor, RequestedDate, StartDate, EndDate, null as samAccountName, Agency, EMailStatus, Office,
+					ContractNumber, EmergencyPerson, EmergencyNumber, EmergencyEmail, DepartmentCode, CompanyCode, LocationCode,
+					JobTitle, Status, Comment, PersonalEmail, MobilePhone, Photo
+	FROM            tblContractors
+UNION
+	SELECT			CASE
+						WHEN ContractorID is null THEN CONCAT('C', FORMAT([Index], '00000'))
+						ELSE ContractorID
+					END AS ContractorID,
+					[Index], FirstName, LastName, Alias, ManagerID, ISMTicket,
+					RequestedBy, RequestedFor, RequestedDate, StartDate, EndDate, samAccountName, Agency, EMailStatus, Office,
+					ContractNumber, EmergencyPerson, EmergencyNumber, EmergencyEmail, DepartmentCode, CompanyCode, LocationCode,
+					JobTitle, Status, Comment, PersonalEmail, MobilePhone, Photo
+	FROM		tblContractors1
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CASE THEN sample
+				CASE
+					WHEN ContractorID is null THEN CONCAT('C', FORMAT([Index], '00000'))
+					ELSE ContractorID
+				END AS ContractorID,
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+CAST sample
+
+CAST(CAST(tblContractorsNew.StartDate AS DATE) AS nvarchar) AS StartDateText,
+				
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CASE THEN sample when user Terminate within 14 days
+		
+CASE
+WHEN GetDate() >= DATEADD(day, -14, tblContractorsNew.EndDate) AND tblContractorsNew.EndDate >= GetDate() THEN CAST(CAST(tblContractorsNew.EndDate AS DATE) AS nvarchar)
+ELSE NULL
+END AS FutureTerminationDate
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+JOIN sample with clause
+			
+LEFT JOIN
+dbo.tblADUsers ON tblContractorsNew.ManagerID = dbo.tblADUsers.EmployeeID AND 
+((dbo.tblADUsers.DistinguishedName like '%Office%') OR (dbo.tblADUsers.DistinguishedName like '%Contractor%'))
+		
+-------------------------------------------------------------------------------------------------------------------------------------------------------
